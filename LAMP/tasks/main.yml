@@ -1,0 +1,10 @@
+--- 
+- 
+  apt: "name={{ item }} state=present"
+  name: "LAMP installation"
+  with_items: 
+    - apache2
+    - php
+    - php-mysqlnd
+    - python3-pymysql
+    - mysql-server

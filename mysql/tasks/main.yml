@@ -1,0 +1,29 @@
+--- 
+- 
+  name: "Starting the mysqld service"
+  service: 
+    name: mysql
+    state: started
+- 
+  mysql_db: 
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    name: "{{wp_mysql_db}}"
+    state: present
+  name: "Creating database for wordpress"
+- 
+  mysql_user: 
+    check_implicit_admin: true
+    login_password: Chethu8123$
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    login_user: root
+    name: "{{wp_mysql_user}}"
+    password: "{{wp_mysql_password}}"
+    priv: "*.*:ALL"
+    state: present
+  name: "Creating user for wordpress and allow all permissions to db wordpress"
+- 
+  name: "starting apache2 and mysqld"
+  service: "name={{ item }} state=restarted"
+  with_items: 
+    - apache2
+    - mysql

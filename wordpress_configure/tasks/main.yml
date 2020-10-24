@@ -1,0 +1,29 @@
+--- 
+- 
+  name: "Downloading wordpress to document root of remote nodes"
+  unarchive: 
+    dest: /var/www/html/
+    remote_src: true
+    src: "http://www.wordpress.org/latest.tar.gz"
+- 
+  command: "mv /var/www/html/wordpress/wp-config-sample.php /var/www/html/wordpress/wp-config.php"
+  name: "Renaming sample wordpress configuration from webserver"
+- 
+  lineinfile: "dest=/var/www/html/wordpress/wp-config.php regexp={{ item.regexp }} line={{ item.line }}"
+  name: "Update WordPress config file"
+  with_items: 
+    - 
+      line: "define('DB_NAME', '{{wp_mysql_db}}');"
+      regexp: "define\\( 'DB_NAME', '(database_name_here)+' \\);"
+    - 
+      line: "define('DB_USER', '{{wp_mysql_user}}');"
+      regexp: "define\\( 'DB_USER', '(username_here)+' \\);"
+    - 
+      line: "define('DB_PASSWORD', '{{wp_mysql_password}}');"
+      regexp: "define\\( 'DB_PASSWORD', '(password_here)+' \\);"
+    - 
+      line: "define('DB_HOST', '{{wp_mysql_host}}');"
+      regexp: "define\\( 'DB_HOST', '(localhost)+' \\);"
+- 
+  lineinfile: "dest=/etc/apache2/apache2.conf line=\"DocumentRoot /var/www/html/wordpress\""
+  name: "Update default Apache site"
